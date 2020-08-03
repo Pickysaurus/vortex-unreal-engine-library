@@ -1,0 +1,37 @@
+{
+  "name": "unreal-engine-game-library",
+  "version": "1.0.0",
+  "description": "A library of generic functions for setting up a Vortex extension for an Unreal Engine game.",
+  "main": "./out/index.js",
+  "repository": "",
+  "scripts": {
+    "webpack": "node ./node_modules/webpack/bin/webpack --config webpack.config.js --display-error-details --progress --profile --color",
+    "bundle7z": "7z a -t7z sample-extension.7z .\\dist\\index.js .\\dist\\info.json",
+    "build": "npm run webpack && extractInfo"
+  },
+  "author": "Pickysaurus",
+  "license": "GPL-3.0",
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "devDependencies": {
+    "7z-bin": "Nexus-Mods/7z-bin",
+    "@types/i18next": "^12.1.0",
+    "@types/node": "^12.0.10",
+    "@types/react": "^16.8.22",
+    "@types/redux": "^3.6.0",
+    "@types/redux-thunk": "^2.1.0",
+    "bluebird": "^3.5.5",
+    "electron": "8.3.4",
+    "i18next": "^17.0.4",
+    "react": "^16.8.6",
+    "react-bootstrap": "^0.32.4",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.2",
+    "vortex-api": "Nexus-Mods/vortex-api",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.4"
+  }
+}
