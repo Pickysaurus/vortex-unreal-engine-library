@@ -1,5 +1,5 @@
-const { actions, fs, util } = require('vortex-api');
-const { mainModule } = require('process');
+const { fs } = require('vortex-api');
+const path = require('path');
 
 function main(context) {
 
