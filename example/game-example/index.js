@@ -5,7 +5,7 @@ function main(context) {
 
   context.requireExtension('unreal-engine-game-library');
 
-  context.registerUnrealEngineGame({
+  const game1 = context.registerUnrealEngineGame({
     name: 'Test Game 1',
     id: 'test1',
     logo: 'placeholder.png',
@@ -14,7 +14,7 @@ function main(context) {
     modsPath: path.join('testgame', 'content', 'paks', '~mods')
   });
 
-  context.registerUnrealEngineGame({
+  const game2 = context.registerUnrealEngineGame({
     name: 'Test Game 2',
     id: 'test2',
     logo: 'placeholder.png',
@@ -23,6 +23,11 @@ function main(context) {
     modsPath: path.join('testgame', 'content', 'paks', '~mod'),
     loadOrder: true
   });
+
+  context.registerGame(game1);
+  context.registerGame(game2);
+
+  return true;
 }
 
 module.exports = {

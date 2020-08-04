@@ -49,7 +49,7 @@ export class UnrealEngineGame implements types.IGame {
         }
 
 
-        context.registerGame(this);
+        //context.registerGame(this);
 
         if (game.loadOrder) {
             context.registerLoadOrderPage({
