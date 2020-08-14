@@ -3,7 +3,7 @@ const path = require('path');
 
 function main(context) {
 
-  context.requireExtension('unreal-engine-game-library');
+  context.requireExtension('Unreal Engine Game Library');
 
   const game1 = context.registerUnrealEngineGame({
     name: 'Test Game 1',
