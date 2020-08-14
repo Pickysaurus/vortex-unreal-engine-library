@@ -1,6 +1,10 @@
 {
-  "name": "Game: Fake Games 1 & 2",
+  "name": "Soul Calibur VI Support",
   "author": "Pickysaurus",
-  "version": "1.0.0",
-  "description": "Demo for the Unreal Engine Game Library extension."
+  "version": "0.1.1",
+  "description": "Adds mod management and load order support for Soul Calibur VI to Vortex",
+  "type": "game",
+  "path": "C:\\Users\\Mike\\AppData\\Roaming\\Vortex\\plugins\\Soul Calibur VI Support-154-0-1-1-1597395531.7z",
+  "bundled": false,
+  "modId": 154
 }

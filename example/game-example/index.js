@@ -3,12 +3,13 @@ const { actions, fs, util } = require('vortex-api');
 const path = require('path');
 
 // Basic Game Information
-const GAMEID = 'soulcaliburvi'; //Nexus Mods ID (the part of the URL before "mods")
-const GAME_NAME = 'Soul Calibur VI';
-const EXE_PATH = path.join('SoulcaliburVI', 'Binaries', 'Win64', 'SoulcaliburVI.exe');
+const GAMEID = 'nexusmodsdomainid'; //Nexus Mods ID (the part of the URL before "mods")
+const GAME_NAME = 'Name of the Game';
+const GAME_ARTWORK = 'gameart.png';
+const EXE_PATH = path.join('NamedFolder', 'Binaries', 'Win64', 'SoulcaliburVI.exe');
 
 // Game store IDs - fill in the ones that apply, leave any others as ''. 
-const STEAMAPP_ID = '544750';
+const STEAMAPP_ID = '';
 const GOGAPP_ID = '';
 const EPICAPP_ID = '';
 const WINDOWSAPP_ID = '';
@@ -22,14 +23,14 @@ const GAMESTORES = [STEAMAPP_ID, GOGAPP_ID, EPICAPP_ID, WINDOWSAPP_ID, UPLAYAPP_
   - loadOrder: do we want to show the load order tab? 
 */
 const UNREALDATA = {
-  modsPath: path.join('SoulcaliburVI', 'Content', 'Paks', '~mods'),
+  modsPath: path.join('NamedFolder', 'Content', 'Paks', '~mods'),
   fileExt: '.pak',
   loadOrder: true,
 }
 
 function main(context) {
 
-  context.requireExtension('unreal-engine-mod-installer');
+  context.requireExtension('Unreal Engine Mod Installer');
 
   context.registerGame({
     id: GAMEID,
@@ -42,7 +43,7 @@ function main(context) {
     compatible: {
       unrealEngine: true
     },
-    logo: 'placeholder.png',
+    logo: GAME_ARTWORK,
     executable: () => EXE_PATH,
     requiredFiles: [
       EXE_PATH,
@@ -62,7 +63,7 @@ function main(context) {
     let previousLO;
     context.registerLoadOrderPage({
       gameId: GAMEID,
-      gameArtURL: `${__dirname}\\gameart.jpg`,
+      gameArtURL: path.join(__dirname, GAME_ARTWORK),
       preSort: (items, direction) => preSort(context.api, items, direction),
       filter: mods => mods.filter(mod => mod.type === 'ue4-sortable-modtype'),
       displayCheckboxes: false,
@@ -73,9 +74,10 @@ function main(context) {
         previousLO = loadOrder;
       },
       createInfoPanel: () => 
-        `Drag and drop the mods on the left to reorder them. ${GAME_NAME} loads mods in alphanumerical order so Vortex prefixes `
+      context.api.translate(`Drag and drop the mods on the left to reorder them. {{gameName}} loads mods in alphanumerical order so Vortex prefixes `
       + 'the folder names with "AAA, AAB, AAC, ..." to ensure they load in the order you set here. '
       + 'The number in the left column represents the overwrite order. The changes from mods with higher numbers will take priority over other mods which make similar edits.',
+      { replace: { gameName: GAME_NAME }}),
     });
   }
 }
@@ -98,11 +100,11 @@ async function preSort(api, items, direction) {
     let name = modInfo ? modInfo.attributes.customFileName ?? modInfo.attributes.logicalFileName ?? modInfo.attributes.name : mod.name;
     const paks = util.getSafe(modInfo.attributes, ['unrealModFiles'], []);
     if (paks.length > 1) name = name + ` (${paks.length} ${fileExt} files)`;
-
+    
     return {
       id: mod.id,
       name,
-      imgUrl: modInfo ? modInfo.attributes.pictureUrl : undefined
+      imgUrl: util.getSafe(modInfo, ['attributes', 'pictureUrl'], path.join(__dirname, GAME_ARTWORK))
     }
   });
 
