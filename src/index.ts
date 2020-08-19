@@ -26,6 +26,10 @@ function main(context: types.IExtensionContext) {
   };
 
   const getUnrealModsPath = (game: types.IGame): string => {
+    // Get the absModsPath from the game details.
+    const absModsPath = util.getSafe(game, ['details', 'unrealEngine', 'absModsPath'], undefined);
+    // If we have an absolute path, we can just return that. 
+    if (absModsPath) return absModsPath;
     // Get the modsPath from the game details.
     const modsPath = util.getSafe(game, ['details', 'unrealEngine', 'modsPath'], undefined);
     // Get the game root folder

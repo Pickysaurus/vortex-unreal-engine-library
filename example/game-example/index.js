@@ -18,11 +18,13 @@ const GAMESTORES = [STEAMAPP_ID, GOGAPP_ID, EPICAPP_ID, WINDOWSAPP_ID, UPLAYAPP_
 
 /* 
   Unreal Engine Game Data 
+  - absModsPath: if the mods folder isn't inside the game directly, define the full path here. 
   - modsPath: this is where the mod files need to be installed, relative to the game install folder.
   - fileExt(optional): if for some reason the game uses something other than PAK files, add the extensions here.
   - loadOrder: do we want to show the load order tab? 
 */
 const UNREALDATA = {
+  // absModsPath: path.join(app.getPath('Documents'), 'My Games', 'Some game', 'Mods),
   modsPath: path.join('NamedFolder', 'Content', 'Paks', '~mods'),
   fileExt: '.pak',
   loadOrder: true,
