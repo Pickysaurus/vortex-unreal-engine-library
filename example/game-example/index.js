@@ -57,7 +57,7 @@ function main(context) {
     details: {
       unrealEngine: UNREALDATA,
       steamAppId: STEAMAPP_ID,
-      customOpenModsPath: UNREALDATA.modsPath
+      customOpenModsPath: UNREALDATA.absModsPath || UNREALDATA.modsPath
     }
   });
 
