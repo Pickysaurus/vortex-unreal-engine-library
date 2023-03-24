@@ -65,7 +65,7 @@ export class UnrealEngineGame implements types.IGame {
     }
 
     getPakModsPath = (api: types.IExtensionApi, modsPath: string) => {
-        const state = api.store.getState();
+        const state = api.getState();
         const discoveryPath = util.getSafe(state.settings, ['gameMode', 'discovered', this.id, 'path'], undefined);
         const pakPath = [discoveryPath].concat(modsPath.split(path.sep));
         return discoveryPath ? path.join.apply(null, pakPath) : undefined;
