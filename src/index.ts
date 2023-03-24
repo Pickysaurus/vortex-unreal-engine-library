@@ -11,7 +11,7 @@ function main(context: IExtensionContextExt) {
     new UnrealEngineGame(context, game);
   };
 
-  const testUnrealGame = (gameId): boolean => {
+  const testUnrealGame = (gameId: string): boolean => {
     const game: types.IGame = util.getGame(gameId);
     const unrealModsPath = util.getSafe(game, ['details', 'unrealModsPath'], undefined);
     return !!unrealModsPath;
@@ -136,9 +136,11 @@ function makePrefix(input) {
   return util.pad(res, 'A', 3);
 }
 
-function loadOrderPrefix(api: types.IExtensionApi, mod: types.IMod) {
-  const state = api.store.getState();
-  const profile = selectors.activeProfile(state);
+function loadOrderPrefix(api: types.IExtensionApi, mod: types.IMod): string {
+  const state = api.getState();
+  const gameId = mod.attributes.downloadGame;
+  if (!gameId) return 'ZZZZ-';
+  const profile = selectors.lastActiveProfileForGame(state, gameId);
   const loadOrder = util.getSafe(state, ['persistent', 'loadOrder', profile.id], {});
   const loKeys = Object.keys(loadOrder);
   const pos = loKeys.indexOf(mod.id);
