@@ -1848,7 +1848,7 @@ __metadata:
 
 "typescript@patch:typescript@^3.5.2#~builtin<compat/typescript>":
   version: 3.9.7
-  resolution: "typescript@patch:typescript@npm%3A3.9.7#~builtin<compat/typescript>::version=3.9.7&hash=a1c5e5"
+  resolution: "typescript@patch:typescript@npm%3A3.9.7#~builtin<compat/typescript>::version=3.9.7&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
