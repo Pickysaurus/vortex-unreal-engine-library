@@ -1173,9 +1173,9 @@ __metadata:
   linkType: hard
 
 "lodash@npm:^4.17.10":
-  version: 4.17.19
-  resolution: "lodash@npm:4.17.19"
-  checksum: a5cc77099fae9f0052003e8242b06d7572be7c88cbe5152ddf5a3d97bc795cfaf73f10befeb6e23efac84fae94e2255d398cb371349cb3f878c9792a0213cacd
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
   languageName: node
   linkType: hard
 
@@ -1848,7 +1848,7 @@ __metadata:
 
 "typescript@patch:typescript@^3.5.2#~builtin<compat/typescript>":
   version: 3.9.7
-  resolution: "typescript@patch:typescript@npm%3A3.9.7#~builtin<compat/typescript>::version=3.9.7&hash=701156"
+  resolution: "typescript@patch:typescript@npm%3A3.9.7#~builtin<compat/typescript>::version=3.9.7&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
