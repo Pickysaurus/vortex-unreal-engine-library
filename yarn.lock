@@ -1873,7 +1873,7 @@ __metadata:
     electron: 18.3.7
     ts-loader: ^9.4.2
     typescript: ^3.5.2
-    vortex-api: Nexus-Mods/vortex-api
+    vortex-api: "github:Nexus-Mods/vortex-api"
     webpack: ^5.76.3
     webpack-cli: ^5.0.1
   languageName: unknown
@@ -1918,12 +1918,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-vortex-api@Nexus-Mods/vortex-api:
-  version: 1.3.0-r1
-  resolution: "vortex-api@https://github.com/Nexus-Mods/vortex-api.git#commit=deaf31a5aa466e38d782e5b268e2151b1ad5fcfc"
+"vortex-api@github:Nexus-Mods/vortex-api":
+  version: 1.8.0-r2
+  resolution: "vortex-api@https://github.com/Nexus-Mods/vortex-api.git#commit=05d09919706066ed9d37dcd6c36a1285b0fc4a0e"
   bin:
     extractInfo: ./bin/extractInfo.js
-  checksum: 0f133c20831e5e53ccd72d50ef022f14077ec84c1ff3730ff6a3b7e15b77ad4eb46d57b4defea92b06adc6fc70d0e03ffc2ccad66202cbb7a7ac4f7881a4dcec
+  checksum: 0d2dd310e14b337ee92525b98af3c5310190a6b27c3ea213fc04b354900c6d1685c8ea4b6c28593ba8c4d45561dfcc1f4bddb77d6b76a2ceaf5ed89ce3717179
   languageName: node
   linkType: hard
 
