@@ -25,7 +25,7 @@ export class UnrealEngineGame implements types.IGame {
     + 'the folder names with "AAA, AAB, AAC, ..." to ensure they load in the order you set here. '
     + 'The number in the left column represents the overwrite order. The changes from mods with higher numbers will take priority over other mods which make similar edits.'
 
-    constructor(context, game: UnrealEngineGameData) {
+    constructor(context: types.IExtensionContext, game: UnrealEngineGameData) {
         this.id = game.id;
         this.name = game.name;
         this.mergeMods = true;
@@ -52,11 +52,11 @@ export class UnrealEngineGame implements types.IGame {
         //context.registerGame(this);
 
         if (game.loadOrder) {
-            context.registerLoadOrderPage({
+            (context as any).registerLoadOrderPage({
                 gameId: this.id,
                 gameArtURL: game.defaultLOImage || `${__dirname}\\placeholder.png`,
                 presort: (items, direction) => this.preSort(context.api, items, direction),
-                filter: mods => mods.filter(mod => mod.type === 'ue4-sortable-modtype'),
+                filter: (mods: any[]) => mods.filter(mod => mod.type === 'ue4-sortable-modtype'),
                 displayCheckboxes: false,
                 callback: (loadOrder) => this.loadOrderCB(context, loadOrder),
                 createInfoPanel: () => game.loadOrderHelpText || context.api.translate(this.genericLOHelpText, { replace:{ game: game.name } })
@@ -71,12 +71,12 @@ export class UnrealEngineGame implements types.IGame {
         return discoveryPath ? path.join.apply(null, pakPath) : undefined;
     }
 
-    prepareForModding = (modPath) => {
+    prepareForModding = (modPath: string) => {
         return fs.ensureDirWritableAsync(modPath);
     }
 
-    preSort = async (api, items, direction) => {
-        const mods = util.getSafe(api.store.getState(), ['persistent', 'mods', this.id], {});
+    preSort = async (api: types.IExtensionApi, items: any[], direction: 'ascending' | 'descending') => {
+        const mods = util.getSafe(api.getState(), ['persistent', 'mods', this.id], {});
       
         const loadOrder = items.map(mod => {
           const modInfo = mods[mod.id];
@@ -95,7 +95,7 @@ export class UnrealEngineGame implements types.IGame {
       
     }
 
-    loadOrderCB = (context, loadOrder) => {
+    loadOrderCB = (context: types.IExtensionContext, loadOrder) => {
         if (this.previousLO === undefined) this.previousLO = loadOrder;
         if (loadOrder === this.previousLO) return;
         context.api.store.dispatch(actions.setDeploymentNecessary(this.id, true));

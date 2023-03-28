@@ -32,7 +32,7 @@ function main(context: IExtensionContextExt) {
   };
 
   context.registerInstaller('ue4-pak-installer', 25, testForUnrealMod, 
-    (files, destinationPath, gameId) => installUnrealMod(context.api, files, gameId)
+    (files, __destinationPath, gameId) => installUnrealMod(context.api, files, gameId)
   );
 
   // Mod type of standard (non-sortable) PAKs  
