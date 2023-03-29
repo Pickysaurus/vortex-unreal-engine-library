@@ -1,29 +1,22 @@
 import { selectors, types, util } from 'vortex-api';
 import * as path from 'path';
-import { UnrealEngineGame, UnrealEngineGameData } from './unrealenginegame';
 
-export interface IExtensionContextExt extends types.IExtensionContext {
-  registerUnrealEngineGame: (game: UnrealEngineGameData) => void;
-}
+function main(context: types.IExtensionContext) {
 
-function main(context: IExtensionContextExt) {
-  context.registerUnrealEngineGame = (game: UnrealEngineGameData) => {
-    new UnrealEngineGame(context, game);
-  };
-
-  const testUnrealGame = (gameId: string): boolean => {
+  const testUnrealGame = (gameId: string, withLoadOrder?: boolean): boolean => {
     const game: types.IGame = util.getGame(gameId);
-    const unrealModsPath = util.getSafe(game, ['details', 'unrealModsPath'], undefined);
-    return !!unrealModsPath;
+    const unrealModsPath = util.getSafe(game, ['details', 'unrealEngine'], undefined);
+    const loadOrder = !!withLoadOrder ? util.getSafe(game, ['details', 'unrealEngine', 'loadOrder'], false) : true;
+    return (!!unrealModsPath && loadOrder === true);
   };
 
-  const testForUnrealMod = (files, gameId) => {
-    const supportedGame: boolean = testUnrealGame(gameId);
-    const fileExt: string = util.getSafe(util.getGame(gameId), ['details', 'unrealFileExt'], undefined);
-    let pakFiles = [];
-    if (fileExt) pakFiles = files.filter(file => path.extname(file).toLowerCase() === fileExt.toLowerCase());
+  const testForUnrealMod = (files: string[], gameId: string) => {
+    const supportedGame: boolean = testUnrealGame(gameId); 
+    const fileExt: string = util.getSafe(util.getGame(gameId), ['details', 'unrealEngine', 'fileExt'], '.pak');
+    let modFiles = [];
+    if (fileExt) modFiles = files.filter(file => path.extname(file).toLowerCase() === fileExt.toLowerCase());
     
-    const supported = (supportedGame && pakFiles.length > 0);
+    const supported = (supportedGame && modFiles.length > 0);
 
     return Promise.resolve({
       supported,
@@ -35,9 +28,24 @@ function main(context: IExtensionContextExt) {
     (files, __destinationPath, gameId) => installUnrealMod(context.api, files, gameId)
   );
 
+  const getUnrealModsPath = (game: types.IGame): string => {
+    // Get the absModsPath from the game details.
+    const absModsPath = util.getSafe(game, ['details', 'unrealEngine', 'absModsPath'], undefined);
+    // If we have an absolute path, we can just return that. 
+    if (absModsPath) return absModsPath;
+    // Get the modsPath from the game details.
+    const modsPath = util.getSafe(game, ['details', 'unrealEngine', 'modsPath'], undefined);
+    // Get the game root folder
+    const state = context.api.getState();
+    const discoveryPath = util.getSafe(state.settings, ['gameMode', 'discovered', game.id, 'path'], undefined);
+    // Combine the paths to get the deployment folder. 
+    const installPath = [discoveryPath].concat(modsPath.split(path.sep));
+    return discoveryPath ? path.join.apply(null, installPath) : undefined;
+  }
+
   // Mod type of standard (non-sortable) PAKs  
   context.registerModType('ue4-modtype', 25, testUnrealGame, 
-    (game: types.IGame) => game.details.unrealModsPath(), 
+    getUnrealModsPath, 
     () => Promise.resolve(false), 
     {
       name: 'Unreal Engine 4 Mod',
@@ -50,9 +58,9 @@ function main(context: IExtensionContextExt) {
     'ue4-sortable-modtype', 
     25, 
     // Test for game ID
-    testUnrealGame, 
+    (gameId: string) => testUnrealGame(gameId, true),
     // Install Path
-    (game: types.IGame) => game.details.unrealModsPath(), 
+    getUnrealModsPath, 
     // Alway return false for auto detection as we can't determine the game. 
     () => Promise.resolve(false), 
     {
@@ -66,8 +74,8 @@ function main(context: IExtensionContextExt) {
 
 async function installUnrealMod(api: types.IExtensionApi, files: string[], gameId: string) {
   const game: types.IGame = util.getGame(gameId);
-  const fileExt: string = util.getSafe(game, ['details', 'unrealFileExt'], undefined);
-  const sortable: boolean = util.getSafe(game, ['details', 'unrealLoadOrder'], false);
+  const fileExt: string = util.getSafe(game, ['details', 'unrealEngine', 'fileExt'], '.pak');
+  const sortable: boolean = util.getSafe(game, ['details', 'unrealEngine', 'loadOrder'], false);
   if (!fileExt) Promise.reject('Unsupported game - UE4 installer failed.');
 
   const modFiles: string[] = files.filter(file => path.extname(file).toLowerCase() === fileExt.toLowerCase());
@@ -81,6 +89,12 @@ async function installUnrealMod(api: types.IExtensionApi, files: string[], gameI
     ? await chooseFilesToInstall(api, modFiles, fileExt) 
     : modFiles;
 
+  const unrealModFiles = {
+    type: 'attribute',
+    key: 'unrealModFiles',
+    value: modFiles.map(f => path.basename(f))
+  }
+
   let instructions = installFiles.map(file => {
     return {
       type: 'copy',
@@ -90,6 +104,7 @@ async function installUnrealMod(api: types.IExtensionApi, files: string[], gameI
   });
   
   instructions.push(modType);
+  instructions.push(unrealModFiles);
 
   return Promise.resolve({instructions});
 
@@ -119,7 +134,8 @@ async function chooseFilesToInstall(api: types.IExtensionApi, files: string[], f
     if (result.action === 'Cancel') return Promise.reject( new util.ProcessCanceled('User cancelled.') );
     else {
       const installAll = (result.action === 'Install All' || result.action === 'Install All_plural');
-      const installPAKS = installAll ? files : Object.keys(result.input).filter(s => result.input[s]);
+      const installPAKS = installAll ? files : Object.keys(result.input).filter(s => result.input[s])
+      .map(file => files.find(f => path.basename(f) === file));
 
       return installPAKS;
     }
