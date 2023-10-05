@@ -20,7 +20,7 @@
     "7z-bin": "Nexus-Mods/7z-bin",
     "@types/node": "^12.0.10",
     "bluebird": "^3.5.5",
-    "electron": "18.3.7",
+    "electron": "22.3.25",
     "ts-loader": "^9.4.2",
     "typescript": "^3.5.2",
     "vortex-api": "github:Nexus-Mods/vortex-api",
