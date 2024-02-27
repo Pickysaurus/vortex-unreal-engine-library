@@ -1,6 +1,6 @@
 {
   "name": "unreal-engine-game-library",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "A library of generic functions for setting up a Vortex extension for an Unreal Engine game.",
   "main": "./out/index.js",
   "repository": "",
