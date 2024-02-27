@@ -157,7 +157,7 @@ function loadOrderPrefix(api: types.IExtensionApi, mod: types.IMod): string {
   const gameId = mod.attributes.downloadGame;
   if (!gameId) return 'ZZZZ-';
   const profile = selectors.lastActiveProfileForGame(state, gameId);
-  const loadOrder = util.getSafe(state, ['persistent', 'loadOrder', profile.id], {});
+  const loadOrder = util.getSafe(state, ['persistent', 'loadOrder', profile], {});
   const loKeys = Object.keys(loadOrder);
   const pos = loKeys.indexOf(mod.id);
   if (pos === -1) {
