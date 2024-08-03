@@ -50,7 +50,7 @@ function main(context: types.IExtensionContext) {
     getUnrealModsPath, 
     () => Promise.resolve(false), 
     {
-      name: 'Unreal Engine 4 Mod',
+      name: 'Unreal Engine Pak Mod',
       mergeMods: false
     }
   );
@@ -66,7 +66,7 @@ function main(context: types.IExtensionContext) {
     // Alway return false for auto detection as we can't determine the game. 
     () => Promise.resolve(false), 
     {
-      name: 'Unreal Engine 4 Sortable Mod',
+      name: 'Unreal Engine Pak Sortable Mod',
       mergeMods: mod => loadOrderPrefix(context.api, mod) + mod.id
     }
   );
@@ -78,7 +78,7 @@ async function installUnrealMod(api: types.IExtensionApi, files: string[], gameI
   const game: types.IGame = util.getGame(gameId);
   let fileExt: (string | string[]) = util.getSafe(game, ['details', 'unrealEngine', 'fileExt'], '.pak');
   const sortable: boolean = util.getSafe(game, ['details', 'unrealEngine', 'loadOrder'], false);
-  if (!fileExt) Promise.reject('Unsupported game - UE4 installer failed.');
+  if (!fileExt) Promise.reject('Unsupported game - UE installer failed.');
 
   if (!Array.isArray(fileExt)) fileExt = [fileExt]
   const modFiles: string[] = files.filter(file => fileExt.includes(path.extname(file).toLowerCase()));
