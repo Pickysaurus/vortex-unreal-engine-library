@@ -12,10 +12,12 @@ function main(context: types.IExtensionContext) {
 
   const testForUnrealMod = (files: string[], gameId: string) => {
     const supportedGame: boolean = testUnrealGame(gameId); 
-    const fileExt: string = util.getSafe(util.getGame(gameId), ['details', 'unrealEngine', 'fileExt'], '.pak');
+    let fileExt: (string | string[]) = util.getSafe(util.getGame(gameId), ['details', 'unrealEngine', 'fileExt'], '.pak');
     let modFiles = [];
-    if (fileExt) modFiles = files.filter(file => path.extname(file).toLowerCase() === fileExt.toLowerCase());
-    
+    if (fileExt) {
+      if (!Array.isArray(fileExt)) fileExt = [fileExt]
+      modFiles = files.filter(file => fileExt.includes(path.extname(file).toLowerCase()));
+    }
     const supported = (supportedGame && modFiles.length > 0);
 
     return Promise.resolve({
@@ -48,7 +50,7 @@ function main(context: types.IExtensionContext) {
     getUnrealModsPath, 
     () => Promise.resolve(false), 
     {
-      name: 'Unreal Engine 4 Mod',
+      name: 'Unreal Engine Pak Mod',
       mergeMods: false
     }
   );
@@ -64,7 +66,7 @@ function main(context: types.IExtensionContext) {
     // Alway return false for auto detection as we can't determine the game. 
     () => Promise.resolve(false), 
     {
-      name: 'Unreal Engine 4 Sortable Mod',
+      name: 'Unreal Engine Pak Sortable Mod',
       mergeMods: mod => loadOrderPrefix(context.api, mod) + mod.id
     }
   );
@@ -74,11 +76,12 @@ function main(context: types.IExtensionContext) {
 
 async function installUnrealMod(api: types.IExtensionApi, files: string[], gameId: string) {
   const game: types.IGame = util.getGame(gameId);
-  const fileExt: string = util.getSafe(game, ['details', 'unrealEngine', 'fileExt'], '.pak');
+  let fileExt: (string | string[]) = util.getSafe(game, ['details', 'unrealEngine', 'fileExt'], '.pak');
   const sortable: boolean = util.getSafe(game, ['details', 'unrealEngine', 'loadOrder'], false);
-  if (!fileExt) Promise.reject('Unsupported game - UE4 installer failed.');
+  if (!fileExt) Promise.reject('Unsupported game - UE installer failed.');
 
-  const modFiles: string[] = files.filter(file => path.extname(file).toLowerCase() === fileExt.toLowerCase());
+  if (!Array.isArray(fileExt)) fileExt = [fileExt]
+  const modFiles: string[] = files.filter(file => fileExt.includes(path.extname(file).toLowerCase()));
 
   const modType: types.IInstruction = {
     type: 'setmodtype',
@@ -110,12 +113,14 @@ async function installUnrealMod(api: types.IExtensionApi, files: string[], gameI
 
 }
 
-async function chooseFilesToInstall(api: types.IExtensionApi, files: string[], fileExt: string) {
+async function chooseFilesToInstall(api: types.IExtensionApi, files: string[], fileExt: string | string[]) {
   const t = api.translate;
 
-  return api.showDialog('question', t('Multiple {{PAK}} files', { replace: { PAK: fileExt } }), 
+  if (!Array.isArray(fileExt)) fileExt = [fileExt]
+
+  return api.showDialog('question', t('Multiple {{PAK}} files', { replace: { PAK: fileExt.join(`/`) } }), 
   {
-    text: t('The mod you are installing contains {{x}} {{ext}} files.', { replace: { x: files.length, ext: fileExt } })+
+    text: t('The mod you are installing contains {{x}} {{ext}} files.', { replace: { x: files.length, ext: fileExt.join(`/`) } })+
     `This can be because the author intended for you to chose one of several options. Please select which files to install below:`,
     checkboxes: files.map((pak: string) => {
       return {
