@@ -67,7 +67,12 @@ function main(context: types.IExtensionContext) {
     () => Promise.resolve(false), 
     {
       name: 'Unreal Engine Pak Sortable Mod',
-      mergeMods: mod => loadOrderPrefix(context.api, mod) + mod.id
+      mergeMods: mod => {
+          const gameId = mod.attributes.downloadGame;
+          const game = util.getGame(gameId);
+          const loadOrderPrefixFunc = util.getSafe(game, ['details', 'unrealEngine', 'loadOrderPrefixFunc'], loadOrderPrefix);
+          return loadOrderPrefixFunc(context, mod) + mod.id;
+      }
     }
   );
 
@@ -157,7 +162,8 @@ function makePrefix(input) {
   return util.pad(res, 'A', 3);
 }
 
-function loadOrderPrefix(api: types.IExtensionApi, mod: types.IMod): string {
+function loadOrderPrefix(context: types.IExtensionContext, mod: types.IMod): string {
+  const api = context.api;
   const state = api.getState();
   const gameId = mod.attributes.downloadGame;
   if (!gameId) return 'ZZZZ-';
