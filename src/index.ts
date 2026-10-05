@@ -151,7 +151,7 @@ async function chooseFilesToInstall(api: types.IExtensionApi, files: string[], f
       const installAll = (result.action === 'Install All' || result.action === 'Install All_plural');
       if (installAll) return files;
 
-      const paksToInstall = Object.values(result.input).map(file => files.find(f => path.basename(f) === file)).filter(f => f !== undefined);
+      const paksToInstall = Object.keys(result.input).filter(s => result.input[s]).map(file => files.find(f => path.basename(f) === file)).filter(f => f !== undefined);
 
       return paksToInstall;
     }
