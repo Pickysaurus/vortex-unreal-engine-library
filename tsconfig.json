@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "noImplicitAny": false,
     "removeComments": true,
     "preserveConstEnums": true,
     "rootDir": "./src",
     "outDir": "./out",
     "jsx": "react",
-    "sourceMap": false
+    "sourceMap": false,
+    "types": ["node"],
+	"esModuleInterop": true
   },
     "exclude": [
       "node_modules"
