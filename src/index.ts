@@ -151,13 +151,23 @@ async function chooseFilesToInstall(api: types.IExtensionApi, files: string[], f
       const installAll = (result.action === 'Install All' || result.action === 'Install All_plural');
       if (installAll) return files;
 
-      const paksToInstall = Object.values(result.input).map(file => files.find(f => path.basename(f) === file)).filter(f => f !== undefined);
+      const input = result.input ?? {};
+
+      const paksToInstall = Object.keys(input).filter(s => input[s]).map(file => files.find(f => path.basename(f) === file)).filter(f => f !== undefined);
+
+      if (paksToInstall.length === 0) {
+        throw new VortexError('No files selected.', {
+          kind: 'user-canceled',
+          skipped: true,
+        });
+      }
 
       return paksToInstall;
     }
 
   }
   catch(e: unknown) {
+    if (e instanceof VortexError) throw e;
     throw new VortexError("Failed to select PAK files", { kind: 'unknown' })
   }
 }
