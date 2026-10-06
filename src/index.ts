@@ -167,6 +167,7 @@ async function chooseFilesToInstall(api: types.IExtensionApi, files: string[], f
 
   }
   catch(e: unknown) {
+    if (e instanceof VortexError) throw e;
     throw new VortexError("Failed to select PAK files", { kind: 'unknown' })
   }
 }
